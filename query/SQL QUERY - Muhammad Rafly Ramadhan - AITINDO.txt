@@ -1,0 +1,44 @@
+1.
+	SELECT id as 'Product ID', name as 'Product Name', price as 'Price'
+	FROM product
+	ORDER BY price DESC
+	LIMIT 5
+
+2.
+	SELECT
+		invoice.id as 'Invoice ID', invoice.date as 'Transaction Date',
+		SUM(product.price * invoice_detail.quantity) as 'Total Price'
+
+	FROM invoice
+	LEFT JOIN invoice_detail ON invoice_detail.invoice_id = invoice.id
+	LEFT JOIN product ON product.id = invoice_detail.product_id
+
+	WHERE (
+		MONTH(invoice.date) = 03 AND YEAR(invoice.date) = 2018
+	)
+
+	GROUP BY invoice.id
+
+	ORDER BY invoice.date ASC
+
+3. 
+	SELECT
+		users.id as 'User ID',
+		COUNT(invoice.id) as 'Total Transactions'
+
+	FROM users
+	LEFT JOIN invoice ON invoice.user_id = users.id
+	LEFT JOIN invoice_detail ON invoice_detail.invoice_id = invoice.id
+	LEFT JOIN product ON product.id = invoice_detail.product_id
+
+	GROUP BY users.id
+
+	ORDER BY SUM(product.price * invoice_detail.quantity) DESC
+
+	LIMIT 5
+
+4.
+	SELECT id as 'Product ID', name as 'Product Name'
+	FROM product
+	WHERE id NOT IN (SELECT product_id FROM invoice_detail)
+	ORDER BY name ASC
